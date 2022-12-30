@@ -1,0 +1,25 @@
+service: aws-node-express-typescript
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  environment:
+    NODE_ENV: dev
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+package:
+  exclude:
+    - config/.env.prod
+  include:
+    - config/.env.dev
+
+functions:
+  serverApp:
+    handler: app/index.serverApp
+    events:
+      - httpApi:
+          path: /api/info
+          method: get

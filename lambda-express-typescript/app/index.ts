@@ -1,10 +1,22 @@
+import * as dotenv from "dotenv";
+dotenv.config();
 import express, { Request, Response } from "express";
+import { Sequelize } from "sequelize-typescript";
 
 import serverless from "serverless-http";
-const app = express();
+import connection from "../db/connection";
+export const app = express();
 app.use(express.json());
 
-app.get("/api/info", (req: Request, res: Response) => {
+let sequelize: Sequelize;
+
+app.get("/api/info", async (req: Request, res: Response) => {
+  if (!sequelize) {
+    sequelize = await connection.sync();
+    console.log("Database connectivity achieved");
+  } else {
+    console.log("Database already connected");
+  }
   res.send({
     owner: "Sanket from serverless",
     version: "1.0",

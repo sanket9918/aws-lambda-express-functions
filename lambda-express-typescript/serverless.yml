@@ -5,6 +5,10 @@ provider:
   runtime: nodejs16.x
   environment:
     NODE_ENV: dev
+    SEQUELIZE_DB_HOST: localhost
+    SEQUELIZE_DB_USERNAME: postgres
+    SEQUELIZE_DB_PASSWORD: postgres
+    SEQUELIZE_DB_DATABASE: boilerplate
 
 plugins:
   - serverless-plugin-typescript

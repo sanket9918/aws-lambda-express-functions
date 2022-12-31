@@ -1,26 +1,21 @@
+import compression from "compression";
 import * as dotenv from "dotenv";
-dotenv.config();
 import express, { Request, Response } from "express";
-import { Sequelize } from "sequelize-typescript";
+dotenv.config();
 
 import serverless from "serverless-http";
-import connection from "../db/connection";
+import { users } from "./controller/user.controller";
+
 export const app = express();
+app.use(compression());
 app.use(express.json());
-
-let sequelize: Sequelize;
-
 app.get("/api/info", async (req: Request, res: Response) => {
-  if (!sequelize) {
-    sequelize = await connection.sync();
-    console.log("Database connectivity achieved");
-  } else {
-    console.log("Database already connected");
-  }
   res.send({
     owner: "Sanket from serverless",
     version: "1.0",
   });
 });
+
+app.use("/users", users);
 
 export const serverApp = serverless(app);

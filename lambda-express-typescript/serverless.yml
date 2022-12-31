@@ -17,9 +17,8 @@ package:
     - config/.env.dev
 
 functions:
-  serverApp:
+  api:
     handler: app/index.serverApp
     events:
-      - httpApi:
-          path: /api/info
-          method: get
+      - httpApi: "*"
+      

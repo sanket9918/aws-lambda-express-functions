@@ -1,27 +1,13 @@
 import { RequestHandler } from "express";
-import { Sequelize } from "sequelize";
-import { getDBConnection } from "../../db/connection";
+import { closeDBInstance, getDBInstance } from "../../db/connection";
 import { Hobby } from "../model/Hobby";
 import { User } from "../model/User";
 
-let sequelize: Sequelize;
-
 export const getUsers: RequestHandler = async (req, res) => {
-    if (!sequelize) {
-        sequelize = await getDBConnection();
-        console.log("Database connectivity achieved");
-    } else {
-        sequelize.connectionManager.initPools();
-        if (sequelize.connectionManager.hasOwnProperty("getConnection")) {
-            delete sequelize.connectionManager.getConnection;
-        }
-        console.log("Database already connected");
-    }
-
+    await getDBInstance();
     const { page } = req.query;
 
     let pageQuery = page as unknown as number;
-
     if (pageQuery === 0) {
         pageQuery = 1;
     }
@@ -43,23 +29,12 @@ export const getUsers: RequestHandler = async (req, res) => {
         console.log(error);
         res.status(500).send(error);
     } finally {
-        await sequelize.connectionManager.close();
+        await closeDBInstance();
     }
 };
 
 export const getASingleUser: RequestHandler = async (req, res) => {
-    console.log("Connection received");
-    if (!sequelize) {
-        sequelize = await getDBConnection();
-        console.log("Database connectivity achieved");
-    } else {
-        sequelize.connectionManager.initPools();
-        if (sequelize.connectionManager.hasOwnProperty("getConnection")) {
-            delete sequelize.connectionManager.getConnection;
-        }
-        console.log("Database already connected");
-    }
-
+    await getDBInstance();
     const id = req.params.id;
     if (!id) {
         res.status(500).send({ error: "Request body is empty" });
@@ -81,21 +56,12 @@ export const getASingleUser: RequestHandler = async (req, res) => {
         console.log(error);
         res.status(500).send(error);
     } finally {
-        await sequelize.connectionManager.close();
+        await closeDBInstance();
     }
 };
 
 export const createUser: RequestHandler = async (req, res) => {
-    if (!sequelize) {
-        sequelize = await getDBConnection();
-        console.log("Database connectivity achieved");
-    } else {
-        sequelize.connectionManager.initPools();
-        if (sequelize.connectionManager.hasOwnProperty("getConnection")) {
-            delete sequelize.connectionManager.getConnection;
-        }
-        console.log("Database already connected");
-    }
+    await getDBInstance();
 
     const newUser = req.body;
     if (!newUser) {
@@ -118,21 +84,12 @@ export const createUser: RequestHandler = async (req, res) => {
         console.log(error);
         res.status(500).send(error);
     } finally {
-        await sequelize.connectionManager.close();
+        await closeDBInstance();
     }
 };
 
 export const updateUser: RequestHandler = async (req, res) => {
-    if (!sequelize) {
-        sequelize = await getDBConnection();
-        console.log("Database connectivity achieved");
-    } else {
-        sequelize.connectionManager.initPools();
-        if (sequelize.connectionManager.hasOwnProperty("getConnection")) {
-            delete sequelize.connectionManager.getConnection;
-        }
-        console.log("Database already connected");
-    }
+    await getDBInstance();
 
     const id = req.params.id;
     if (!id) {
@@ -150,21 +107,12 @@ export const updateUser: RequestHandler = async (req, res) => {
         console.log(error);
         res.status(500).send(error);
     } finally {
-        await sequelize.connectionManager.close();
+        await closeDBInstance();
     }
 };
 
 export const deleteUser: RequestHandler = async (req, res) => {
-    if (!sequelize) {
-        sequelize = await getDBConnection();
-        console.log("Database connectivity achieved");
-    } else {
-        sequelize.connectionManager.initPools();
-        if (sequelize.connectionManager.hasOwnProperty("getConnection")) {
-            delete sequelize.connectionManager.getConnection;
-        }
-        console.log("Database already connected");
-    }
+    await getDBInstance();
 
     const id = req.params.id;
     if (!id) {
@@ -184,6 +132,6 @@ export const deleteUser: RequestHandler = async (req, res) => {
     } catch (error) {
         res.status(500).send(error);
     } finally {
-        await sequelize.connectionManager.close();
+        await closeDBInstance();
     }
 };

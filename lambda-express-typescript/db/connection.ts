@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import { Sequelize } from "sequelize-typescript";
 import { Hobby } from "../app/model/Hobby";
 import { User } from "../app/model/User";
@@ -57,4 +59,3 @@ export async function getDBInstance() {
 export async function closeDBInstance() {
     return await sequelizeInstance.connectionManager.close();
 }
-

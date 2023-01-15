@@ -1,5 +1,4 @@
 import { APIGatewayProxyEvent, Context } from "aws-lambda";
-import { RequestHandler } from "express";
 import { closeDBInstance, getDBInstance } from "../../db/connection";
 import { Hobby } from "../model/Hobby";
 import { User } from "../model/User";

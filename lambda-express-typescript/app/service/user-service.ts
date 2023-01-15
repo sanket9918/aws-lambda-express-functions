@@ -1,11 +1,16 @@
+import { APIGatewayProxyEvent, Context } from "aws-lambda";
 import { RequestHandler } from "express";
 import { closeDBInstance, getDBInstance } from "../../db/connection";
 import { Hobby } from "../model/Hobby";
 import { User } from "../model/User";
+import createError from "http-errors";
 
-export const getUsers: RequestHandler = async (req, res) => {
+export const getUsers = async (
+    event: APIGatewayProxyEvent,
+    _context: Context,
+) => {
     await getDBInstance();
-    const { page } = req.query;
+    const page = event.pathParameters!.page;
 
     let pageQuery = page as unknown as number;
     if (pageQuery === 0) {
@@ -22,22 +27,29 @@ export const getUsers: RequestHandler = async (req, res) => {
                     model: Hobby,
                 },
             ],
+            raw: true,
+            nest: true,
         });
         console.log("Details of all users fetched");
-        res.status(200).send(users);
+
+        return {
+            data: users,
+        };
     } catch (error) {
         console.log(error);
-        res.status(500).send(error);
+        // res.status(500).send(error);
     } finally {
         await closeDBInstance();
     }
 };
 
-export const getASingleUser: RequestHandler = async (req, res) => {
+export const getASingleUser = async (
+    event: APIGatewayProxyEvent,
+    _context: Context,
+) => {
     await getDBInstance();
-    const id = req.params.id;
+    const id = event.pathParameters!.id;
     if (!id) {
-        res.status(500).send({ error: "Request body is empty" });
     }
     try {
         const user = await User.findByPk(id, {
@@ -48,24 +60,33 @@ export const getASingleUser: RequestHandler = async (req, res) => {
             ],
         });
         if (user) {
-            res.status(200).send(user);
+            return user.get({ plain: true });
         } else {
-            res.status(404).send({ error: "No such user found" });
+            return {
+                message: "No record found",
+            };
         }
     } catch (error) {
         console.log(error);
-        res.status(500).send(error);
+        throw new createError.InternalServerError();
     } finally {
         await closeDBInstance();
     }
 };
 
-export const createUser: RequestHandler = async (req, res) => {
+export const createUser = async (
+    event: APIGatewayProxyEvent,
+    _context: Context,
+) => {
     await getDBInstance();
 
-    const newUser = req.body;
+    const newUser: User = event.body as unknown as User;
+    console.log(newUser);
+
     if (!newUser) {
-        res.status(500).send({ error: "Request body is empty" });
+        return {
+            message: "Request body empty",
+        };
     }
     try {
         const users = await User.create(newUser, {
@@ -76,47 +97,60 @@ export const createUser: RequestHandler = async (req, res) => {
             ],
         });
         if (users) {
-            res.status(200).send({ message: "Create user successful" });
+            return { message: "Create user successful" };
         } else {
-            res.status(400).send({ error: "User creation failed" });
+            return { error: "User creation failed" };
         }
     } catch (error) {
         console.log(error);
-        res.status(500).send(error);
+        throw new createError.InternalServerError();
     } finally {
         await closeDBInstance();
     }
 };
 
-export const updateUser: RequestHandler = async (req, res) => {
+export const updateUser = async (
+    event: APIGatewayProxyEvent,
+    _context: Context,
+) => {
     await getDBInstance();
 
-    const id = req.params.id;
+    const id = event.pathParameters!.id;
+    console.log(id);
+
     if (!id) {
-        res.status(500).send({ error: "ID is empty" });
+        return {
+            message: "Request body empty",
+        };
     }
+    const userUpdated: User = event.body as unknown as User;
     try {
-        await User.update(req.body, {
+        await User.update(userUpdated, {
             where: {
                 id,
             },
         });
 
-        res.status(200).send({ message: "User successfully updated " });
+        return { message: "Update user successful" };
     } catch (error) {
         console.log(error);
-        res.status(500).send(error);
+        throw new createError.InternalServerError();
     } finally {
         await closeDBInstance();
     }
 };
 
-export const deleteUser: RequestHandler = async (req, res) => {
+export const deleteUser = async (
+    event: APIGatewayProxyEvent,
+    _context: Context,
+) => {
     await getDBInstance();
 
-    const id = req.params.id;
+    const id = event.pathParameters!.id;
     if (!id) {
-        res.status(500).send({ error: "ID is empty" });
+        return {
+            message: "Request body empty",
+        };
     }
     try {
         const deleteUser = await User.destroy({
@@ -125,12 +159,12 @@ export const deleteUser: RequestHandler = async (req, res) => {
             },
         });
         if (deleteUser < 1) {
-            res.status(404).send({ error: "No such record found to delete" });
+            return { message: "No item to be deleted" };
         } else {
-            res.status(200).send({ message: "User successfully deleted " });
+            return { message: "Delete successful" };
         }
     } catch (error) {
-        res.status(500).send(error);
+        throw new createError.InternalServerError();
     } finally {
         await closeDBInstance();
     }

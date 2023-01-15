@@ -1,4 +1,13 @@
-import { param } from "express-validator";
-export const getSingleUserValidate = () => {
-    return [param("id").isUUID()];
+export const getSingleUserValidate = {
+    type: "object",
+    properties: {
+        pathParameters: {
+            type: "object",
+            properties: {
+                id: { type: "string", format: "uuid" },
+            },
+            required: ["id"],
+        },
+    },
+    required: ["pathParameters"],
 };

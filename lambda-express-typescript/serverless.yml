@@ -25,4 +25,36 @@ functions:
     handler: app/index.serverApp
     events:
       - httpApi: "*"
+  getUsers:
+    handler: app/handler/user-handler.getUsersHandler
+    events:
+      - httpApi:
+          method: POST
+          path: /rewrite/getUsers/{page}
+  getUserById:
+    handler: app/handler/user-handler.getUserByIdHandler
+    events:
+      - httpApi:
+          method: POST
+          path: /rewrite/getUserById/{id}
+          
+  createUser:
+    handler: app/handler/user-handler.createUserHandler
+    events:
+      - httpApi:
+          method: POST
+          path: /rewrite/createUser
+  updateUser:
+    handler: app/handler/user-handler.updateUserHandler
+    events:
+      - httpApi:
+          method: PUT
+          path: /rewrite/updateUser/{id}
+  deleteUser:
+    handler: app/handler/user-handler.deleteUserHandler
+    events:
+      - httpApi:
+          method: DELETE
+          path: /rewrite/deleteUser/{id}
+          
       

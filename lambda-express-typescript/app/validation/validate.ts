@@ -1,20 +1,11 @@
-import { RequestHandler } from "express";
-import { validationResult } from "express-validator";
-import { IValidationError } from "./validationError";
-
-export const validate: RequestHandler = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (errors.isEmpty()) {
-        return next();
-    }
-    const extractedErrors: IValidationError[] = [];
-    errors.array().map((err) =>
-        extractedErrors.push({
-            [err.param]: err.msg,
-        }),
-    );
-    console.log(extractedErrors.length);
-    return res.status(422).json({
-        errors: extractedErrors,
+export const validationErrorFormatter = (request: any) => {
+    const response = request.response;
+    const error = <any>request.error;
+    if (response.statusCode != 400) return;
+    if (!error.expose || !error.cause) return;
+    response.headers["Content-Type"] = "application/json";
+    response.body = JSON.stringify({
+        message: response.body,
+        validationErrors: error.cause,
     });
 };

@@ -5,7 +5,6 @@ import { Lambda } from "aws-sdk";
 dotenv.config();
 
 import serverless from "serverless-http";
-import { users } from "./controller/user.controller";
 import axios from "axios";
 export const app = express();
 app.use(compression());
@@ -17,7 +16,6 @@ app.get("/api/info", async (req: Request, res: Response) => {
     });
 });
 
-app.use("/users", users);
 
 //Through API gateway using the http endpoint of the service.
 app.post("/getBooksWithoutConn", async (req, res) => {

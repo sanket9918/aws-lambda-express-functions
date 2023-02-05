@@ -1,5 +1,13 @@
-import { query } from "express-validator";
-
-export const getUsersValidate = () => {
-    return [query("page").isNumeric()];
+export const getUsersValidate = {
+    type: "object",
+    properties: {
+        pathParameters: {
+            type: "object",
+            properties: {
+                page: { type: "string" },
+            },
+            required: ["page"],
+        },
+    },
+    required: ["pathParameters"],
 };

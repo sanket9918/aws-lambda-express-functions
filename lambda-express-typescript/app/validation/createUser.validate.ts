@@ -1,7 +1,24 @@
-import { body } from "express-validator";
-export const userCreateValidate = () => {
-    return [
-        body("name").notEmpty().isString(),
-        body("age").notEmpty().isNumeric(),
-    ];
+export const userCreateValidate = {
+    type: "object",
+    properties: {
+        body: {
+            type: "object",
+            properties: {
+                name: { type: "string" },
+                age: { type: "number" },
+                hobby: {
+                    type: "array",
+                    items: {
+                        type: "object",
+                        properties: {
+                            name: { type: "string" },
+                        },
+                        required: ["name"],
+                    },
+                },
+            },
+            required: ["name", "age"],
+        },
+    },
+    required: ["body"],
 };

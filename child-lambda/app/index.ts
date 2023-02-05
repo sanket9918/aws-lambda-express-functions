@@ -4,18 +4,18 @@ import express, { Request, Response } from "express";
 dotenv.config();
 
 import serverless from "serverless-http";
-import { users } from "./controller/user.controller";
+import { bookRouter } from "./controller/book.controller";
 
 export const app = express();
 app.use(compression());
 app.use(express.json());
-app.get("/api/info", async (req: Request, res: Response) => {
+app.get("/", async (req: Request, res: Response) => {
   res.send({
-    owner: "Sanket from serverless",
+    owner: "Sanket from serverless child app",
     version: "1.0",
   });
 });
 
-app.use("/users", users);
+app.use("/books", bookRouter);
 
 export const serverApp = serverless(app);

@@ -1,0 +1,40 @@
+service: aws-child-lambda
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  environment:
+    NODE_ENV: dev
+    SEQUELIZE_DB_HOST: localhost
+    SEQUELIZE_DB_USERNAME: postgres
+    SEQUELIZE_DB_PASSWORD: postgres
+    SEQUELIZE_DB_DATABASE: child-lambda
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+package:
+  exclude:
+    - config/.env.prod
+  include:
+    - config/.env.dev
+
+functions:
+  api:
+    handler: app/index.serverApp
+    events:
+      - httpApi: "*"
+  getBooks:
+    handler: app/service/book.getBooks
+    events:
+      - httpApi:
+          path: /books/getBook
+          method: POST
+  createBook:
+    handler: app/service/book.createBook
+    events:
+      - httpApi:
+          path: /books/createBook
+          method: POST
+      

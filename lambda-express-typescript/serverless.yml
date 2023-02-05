@@ -3,6 +3,7 @@ service: aws-node-express-typescript
 provider:
   name: aws
   runtime: nodejs16.x
+  region: ap-south-1
   environment:
     NODE_ENV: dev
     SEQUELIZE_DB_HOST: localhost
@@ -21,8 +22,37 @@ package:
     - config/.env.dev
 
 functions:
-  api:
-    handler: app/index.serverApp
+  
+  getUsers:
+    handler: app/handler/user-handler.getUsersHandler
     events:
-      - httpApi: "*"
+      - httpApi:
+          method: POST
+          path: /rewrite/getUsers/{page}
+  getUserById:
+    handler: app/handler/user-handler.getUserByIdHandler
+    events:
+      - httpApi:
+          method: POST
+          path: /rewrite/getUserById/{id}
+          
+  createUser:
+    handler: app/handler/user-handler.createUserHandler
+    events:
+      - httpApi:
+          method: POST
+          path: /rewrite/createUser
+  updateUser:
+    handler: app/handler/user-handler.updateUserHandler
+    events:
+      - httpApi:
+          method: PUT
+          path: /rewrite/updateUser/{id}
+  deleteUser:
+    handler: app/handler/user-handler.deleteUserHandler
+    events:
+      - httpApi:
+          method: DELETE
+          path: /rewrite/deleteUser/{id}
+          
       

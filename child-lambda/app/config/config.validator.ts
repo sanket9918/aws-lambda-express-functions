@@ -1,7 +1,4 @@
 import joi from "joi";
-import * as dotenv from "dotenv";
-dotenv.config();
-
 
 const configValidation = joi
   .object()

@@ -3,6 +3,7 @@ service: aws-node-express-typescript
 provider:
   name: aws
   runtime: nodejs16.x
+  region: ap-south-1
   environment:
     NODE_ENV: dev
     SEQUELIZE_DB_HOST: localhost

@@ -4,13 +4,20 @@ provider:
   name: aws
   runtime: nodejs16.x
   region: ap-south-1
+  stage: dev
   environment:
-    NODE_ENV: dev
     SEQUELIZE_DB_HOST: localhost
     SEQUELIZE_DB_USERNAME: postgres
     SEQUELIZE_DB_PASSWORD: postgres
     SEQUELIZE_DB_DATABASE: boilerplate
+    MESSAGE: ${self:custom.appEnv.MESSAGE.${self:custom.appStage}}
 
+custom:
+  appStage: ${opt:stage, self:provider.stage}
+  appEnv:
+    MESSAGE:
+      prod: "This is production environment"
+      dev: "This is development environment"
 plugins:
   - serverless-plugin-typescript
   - serverless-offline

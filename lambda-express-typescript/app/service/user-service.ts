@@ -11,6 +11,8 @@ export const getUsers = async (
     await getDBInstance();
     const page = event.pathParameters!.page;
 
+    console.log(process.env.MESSAGE);
+    
     let pageQuery = page as unknown as number;
     if (pageQuery === 0) {
         pageQuery = 1;

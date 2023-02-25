@@ -62,4 +62,11 @@ functions:
           method: DELETE
           path: /rewrite/deleteUser/{id}
           
+  invokeAnotherLambda:
+    handler: app/handler/user-handler.invokeLambdaHandler
+    events:
+      - httpApi:
+          method: POST
+          path: /rewrite/invokeAnotherLambda
+          
       

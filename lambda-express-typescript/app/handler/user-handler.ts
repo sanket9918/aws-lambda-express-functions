@@ -6,6 +6,7 @@ import {
     deleteUser,
     getASingleUser,
     getUsers,
+    invokeAnotherLambda,
     updateUser,
 } from "../service/user-service";
 import validator from "@middy/validator";
@@ -79,3 +80,5 @@ export const deleteUserHandler = middy()
     })
     .use(httpErrorHandler())
     .handler(deleteUser);
+
+export const invokeLambdaHandler = middy().handler(invokeAnotherLambda);

@@ -1,5 +1,6 @@
 import { APIGatewayProxyEvent, Context } from "aws-lambda";
 import { closeDBInstance, getDBInstance } from "../../db/connection";
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import { Hobby } from "../model/Hobby";
 import { User } from "../model/User";
 import createError from "http-errors";
@@ -10,6 +11,8 @@ export const getUsers = async (
 ) => {
     await getDBInstance();
     const page = event.pathParameters!.page;
+
+    console.log(process.env.MESSAGE);
 
     let pageQuery = page as unknown as number;
     if (pageQuery === 0) {
@@ -166,5 +169,45 @@ export const deleteUser = async (
         throw new createError.InternalServerError();
     } finally {
         await closeDBInstance();
+    }
+};
+
+// To invoke a remote lambda
+const lambdaConfig = {
+    region: "us-east-1",
+    endpoint: "http://localhost:4000",
+};
+const params = {
+    FunctionName: "aws-child-lambda-dev-getBooks",
+    LogType: "Tail",
+};
+
+interface IResponseBody {
+    [key: string]: any;
+}
+export const invokeAnotherLambda = async (
+    event: APIGatewayProxyEvent,
+    _context: Context,
+) => {
+    try {
+        const lambda = new LambdaClient(lambdaConfig);
+        let finalArray: IResponseBody = [];
+        await lambda
+            .send(new InvokeCommand(params))
+            .then((data) => {
+                let responseString = JSON.parse(
+                    Buffer.from(data.Payload!).toString(),
+                );
+
+                for (let entry of responseString) {
+                    finalArray.push(entry.dataValues);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        return finalArray;
+    } catch (error) {
+        console.log(error);
     }
 };

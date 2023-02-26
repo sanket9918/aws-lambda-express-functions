@@ -32,6 +32,8 @@ export const getBooks = async (event: any, ctx: any) => {
 
   let pageQuery;
 
+  console.log(event.samplePayload);
+
   if (!pageQuery || pageQuery === 0) {
     pageQuery = 1;
   }

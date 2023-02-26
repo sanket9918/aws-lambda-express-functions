@@ -192,22 +192,32 @@ export const invokeAnotherLambda = async (
     try {
         const lambda = new LambdaClient(lambdaConfig);
         let finalArray: IResponseBody = [];
-        await lambda
-            .send(new InvokeCommand(params))
-            .then((data) => {
-                let responseString = JSON.parse(
-                    Buffer.from(data.Payload!).toString(),
-                );
+        const data = await lambda.send(new InvokeCommand(params));
+        if (data.Payload) {
+            const response = JSON.parse(Buffer.from(data.Payload!).toString());
 
-                for (let entry of responseString) {
-                    finalArray.push(entry.dataValues);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-        return finalArray;
+            for (let items of response) {
+                finalArray.push(items.dataValues);
+            }
+
+            return {
+                data: finalArray,
+            };
+        } else {
+            return {
+                statusCode: 500,
+                body: "Something went wrong",
+            };
+        }
     } catch (error) {
         console.log(error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                success: false,
+                message: "Something went wrong",
+                data: {},
+            }),
+        };
     }
 };

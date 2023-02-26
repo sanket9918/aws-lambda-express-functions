@@ -180,6 +180,11 @@ const lambdaConfig = {
 const params = {
     FunctionName: "aws-child-lambda-dev-getBooks",
     LogType: "Tail",
+    Payload: Buffer.from(
+        JSON.stringify({
+            samplePayload: 123,
+        }),
+    ),
 };
 
 interface IResponseBody {

@@ -1,0 +1,12 @@
+{
+  "name": "docker-lambda",
+  "version": "1.0.0",
+  "description": "Test docker image for lamba deployment",
+  "main": "index.js",
+  "author": "Sanket Mohapatra",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless-plugin-typescript": "^2.1.4",
+    "typescript": "^4.9.5"
+  }
+}

@@ -1,23 +1,29 @@
 # Serverless - AWS Node.js Docker
 
-This project has been generated using the `aws-nodejs-docker` template from the [Serverless framework](https://www.serverless.com/).
-
-For detailed instructions, please refer to the [documentation](https://www.serverless.com/framework/docs/providers/aws/).
-
-## Deployment instructions
-
-> **Requirements**: Docker. In order to build images locally and push them to ECR, you need to have Docker installed on your local machine. Please refer to [official documentation](https://docs.docker.com/get-docker/).
-
-In order to deploy your service, run the following command
-
+This project is an experiment to test the custom nodejs images as lambda and couples with aws ambda runtime interface to make it compatible with the lambda runtime. 
+## Instructions to deploy to Docker 
+- To build the docker image.
+```sh
+docker build -t docker-lambda . 
 ```
-sls deploy
+
+- To run the image in a container
+```sh
+docker run -d -v ~/.aws-lambda-rie:/aws-lambda -p 9000:8080 \                        
+    --entrypoint /aws-lambda/aws-lambda-rie \
+    docker-lambda:latest \
+        /usr/local/bin/npx aws-lambda-ric build/index.handler
 ```
+- To test the functionality of the lambda handler deployed, run this command or else test it with a API testing tool (Postman)
+```sh
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+```
+
 
 ## Test your service
 
-After successful deployment, you can test your service remotely by using the following command:
+To test the code locally without deploying it with the Docker, run this command
 
-```
-sls invoke --function hello
+```sh
+serverless invoke local --function hello -d '{}'
 ```
